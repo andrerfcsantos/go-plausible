@@ -8,7 +8,7 @@ type TimeInterval string
 const (
 	// DateInterval represents a time interval for a particular day.
 	// With this time interval, each data point in the result will refer to a particular day.
-	DateInterval  = TimeInterval("date")
+	DateInterval = TimeInterval("date")
 	// MonthInterval represents a time interval of a particular month.
 	// With this time interval, each data point in the result will refer to a particular month.
 	MonthInterval = TimeInterval("month")
@@ -37,7 +37,7 @@ type TimePeriod struct {
 	Period string
 	// Date is a string representing a date to which the time period refers to, in the format of "yyyy-mm-dd"
 	// This field is optional.
-	Date   string
+	Date string
 }
 
 // Last6Months returns a time period referring to the last 6 months.

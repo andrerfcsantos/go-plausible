@@ -92,11 +92,11 @@ func (mr *MetricsResult) BounceRate() float64 {
 
 // VisitDuration returns the visit duration associated with this result.
 // It will return 0 (zero) if the visit duration information is not present.
-func (ms *MetricsResult) VisitDuration() float64 {
-	if ms.VisitDurationRaw == nil {
+func (mr *MetricsResult) VisitDuration() float64 {
+	if mr.VisitDurationRaw == nil {
 		return 0
 	}
-	return *ms.VisitDurationRaw
+	return *mr.VisitDurationRaw
 }
 
 // TimeseriesDataPoint represents a data point in a time series result.
