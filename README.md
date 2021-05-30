@@ -202,14 +202,14 @@ func main() {
 
 ## Bugs and Feedback
 
-If you encounter any bugs or you have any comment or suggestion, please post them in the [Issues section](github.com/andrerfcsantos/go-plausible/issues) of this repository.
+If you encounter any bugs or have any comment or suggestion, please post them in the [Issues section](https://github.com/andrerfcsantos/go-plausible/issues) of this repository.
 
 ## Contributing
 
 All contributions are welcome!
 
-Feel free to open PR's or post suggestions on the [Issues section](github.com/andrerfcsantos/go-plausible/issues).
+Feel free to open PR's or post suggestions on the [Issues section](https://github.com/andrerfcsantos/go-plausible/issues).
 
 ## License
 
-This project uses the [MIT License](https://github.com/andrerfcsantos/exercism/blob/main/LICENSE)
+This project uses the [MIT License](https://github.com/andrerfcsantos/go-plausible/blob/main/LICENSE)
