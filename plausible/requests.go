@@ -3,6 +3,7 @@ package plausible
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/valyala/fasthttp"
 )
 
@@ -16,14 +17,14 @@ func checkAPIResponseForErrors(resp *fasthttp.Response) ([]byte, error) {
 	status := resp.StatusCode()
 
 	if status < 200 || status > 203 {
-		var errorJson apiError
-		err := json.Unmarshal(body, &errorJson)
+		var errorJSON apiError
+		err := json.Unmarshal(body, &errorJSON)
 
 		if err != nil {
 			return body, fmt.Errorf("non-ok code received (%d) from the API ", status)
 		}
 
-		return body, fmt.Errorf("api error with code %d: %s", status, errorJson.Error)
+		return body, fmt.Errorf("api error with code %d: %s", status, errorJSON.Error)
 	}
 
 	return body, nil

@@ -51,10 +51,10 @@ func NewClientWithBaseURL(token string, baseURL string) *Client {
 
 // Site returns a site handler for a given site ID. The returned handler can be used to query the API for
 // information and statistics about the site. This function does not make any network requests.
-func (c *Client) Site(siteId string) *Site {
+func (c *Client) Site(siteID string) *Site {
 	return &Site{
 		token:           c.token,
-		id:              siteId,
+		id:              siteID,
 		httpClient:      c.client,
 		plausibleClient: c,
 	}

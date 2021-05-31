@@ -17,7 +17,7 @@ import "github.com/andrerfcsantos/go-plausible/plausible"
 To use this client, you'll need an API token, which you can get from Plausible.
 
 With the API token, create a client using the token and get an handler for one or more sites:
-```go 
+```go
 package main
 
 import "github.com/andrerfcsantos/go-plausible/plausible"
@@ -28,10 +28,10 @@ func main() {
 
     // Get an handler to perform queries for a given site
     mysite := client.Site("example.com")
-	
+
     // You can reuse the same client to get handlers for additional sites
     myothersite := client.Site("otherexample.com")
-	
+
     // Use 'mysite' and the 'myothersite' handlers to query stats for the sites
     // ...
 }
@@ -50,7 +50,7 @@ There are 4 types of queries supported by the API:
 
 This is the most straight forward query - for a given site return the number of current visitors:
 
-```go 
+```go
 package main
 
 import (
@@ -63,7 +63,7 @@ func main() {
     client := plausible.NewClient("<your_api_token>")
     // Get an handler to perform queries for a given site
     mysite := client.Site("example.com")
-	
+
     visitors, err := mysite.CurrentVisitors()
     if err != nil {
     	// handle error
@@ -76,12 +76,12 @@ func main() {
 
 An aggregate query reports data for metrics aggregated over a period of time.
 
-A query like "the total number of visitors today" fall into this category, 
+A query like "the total number of visitors today" fall into this category,
 where the period is a day (in this case "today") and the metric is the number of visitors.
 
 Here's how to write this query:
 
-```go 
+```go
 package main
 
 import (
@@ -94,14 +94,14 @@ func main() {
     client := plausible.NewClient("<your_api_token>")
     // Get an handler to perform queries for a given site
     mysite := client.Site("example.com")
-	
+
     todaysVisitorsQuery := plausible.AggregateQuery{
     	Period: plausible.DayPeriod(),
     	Metrics: plausible.Metrics{
     		plausible.Visitors,
     	},
     }
-    
+
     result, err := mysite.Aggregate(todaysVisitorsQuery)
     if err != nil {
         // handle error
@@ -119,7 +119,7 @@ A query like "the number of visitors and page views for each day in the 7 days b
 
 This is how to write this query:
 
-```go 
+```go
 package main
 
 import (
@@ -132,7 +132,7 @@ func main() {
     client := plausible.NewClient("<your_api_token>")
     // Get an handler to perform queries for a given site
     mysite := client.Site("example.com")
-	
+
 	tsQuery := plausible.TimeseriesQuery{
 		Period:  plausible.Last7Days().FromDate(plausible.Date{1, 2, 2021}),
 		Metrics: plausible.Metrics {
@@ -146,7 +146,7 @@ func main() {
 	if err != nil {
 		// handle error
 	}
-	
+
 	// Iterate over the data points
 	for _, stat := range queryResults {
     	fmt.Printf("\tDate: %s | Visitors: %d | Pageviews: %d\n",
@@ -161,12 +161,12 @@ func main() {
 
 A breakdown query reports stats for the value of a given property over a period of time.
 
-For instance, a query like "over the last 7 days what are the number of visitors and 
+For instance, a query like "over the last 7 days what are the number of visitors and
 page views for each page of my site" falls into this category.
 
 Here's how to write such query:
 
-```go 
+```go
 package main
 
 import (
@@ -179,7 +179,7 @@ func main() {
     client := plausible.NewClient("<your_api_token>")
     // Get an handler to perform queries for a given site
     mysite := client.Site("example.com")
-	
+
     pageBreakdownQuery := plausible.BreakdownQuery{
     	Property: plausible.EventPage,
     	Period:   plausible.Last7Days(),
@@ -198,7 +198,7 @@ func main() {
     	fmt.Printf("Page: %s | Visitors: %d | Pageviews: %d \n",
     	            stat.Page, stat.Visitors, stat.Pageviews)
     }
-	
+
 }
 ```
 
