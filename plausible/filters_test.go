@@ -5,12 +5,12 @@ import "testing"
 func TestFilterString(t *testing.T) {
 
 	tests := []struct {
-		filter   *Filter
+		filter   Filter
 		expected string
 	}{
 		{filter: NewFilter(), expected: ""},
 		{filter: NewFilter().ByVisitBrowser("Firefox"), expected: "visit:browser==Firefox"},
-		{filter: NewFilter().ByVisitBrowser("Firefox").ByVisitCountry("Portugal"), expected: "visit:browser==Firefox;visit:country==Portugal"},
+		{filter: NewFilter().ByVisitBrowser("Firefox").ByVisitCountry("PT"), expected: "visit:browser==Firefox;visit:country==PT"},
 	}
 
 	for _, test := range tests {
