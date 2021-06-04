@@ -1,46 +1,83 @@
-package plausible_test
+package plausible
 
 import (
-	"os"
 	"testing"
-
-	"github.com/andrerfcsantos/go-plausible/plausible"
 )
 
-func TestCreateNewSiteRequestQuery(t *testing.T) {
-
-	newDomain := os.Getenv("PLAUSIBLE_NEW_DOMAIN")
-
-	if newDomain == "" {
-		t.Skipf("no new domain is present in the environment variables")
-	}
-
+func TestUnitValidateNewSiteRequest(t *testing.T) {
 	tests := []struct {
-		name       string
-		query      plausible.CreateSiteRequest
-		shouldFail bool
+		name    string
+		request CreateSiteRequest
+		isValid bool
 	}{
 		{
-			name: "create new site",
-			query: plausible.CreateSiteRequest{
-				Domain: newDomain,
+			name: "valid new site request with domain and timezone that should succeed",
+			request: CreateSiteRequest{
+				Domain:   "mydomain.com",
+				Timezone: "Europe/Lisbon",
 			},
-			shouldFail: false,
+			isValid: true,
+		},
+		{
+			name: "valid new site request with domain and timezone that should succeed",
+			request: CreateSiteRequest{
+				Domain: "mydomain.com",
+			},
+			isValid: true,
+		},
+		{
+			name:    "invalid new site request without domain that should fail",
+			request: CreateSiteRequest{},
+			isValid: false,
 		},
 	}
 
-	token := os.Getenv("PLAUSIBLE_PROVISIONING_TOKEN")
-
-	if token == "" {
-		t.Skipf("no provisioning token present in the environment variables")
-	}
-
-	client := plausible.NewClient(token)
-
 	for _, test := range tests {
-		_, err := client.CreateNewSite(test.query)
-		if err != nil && !test.shouldFail {
-			t.Fatalf("test '%s' failed, got unexpected error: %v", test.name, err)
+		valid, _ := test.request.Validate()
+		if valid && !test.isValid {
+			t.Fatalf("test '%s' is valid, but was expected to fail", test.name)
+		}
+		if !valid && test.isValid {
+			t.Fatalf("test '%s' is invalid, but was expected to succeed", test.name)
 		}
 	}
+
+}
+
+func TestUnitToFormArgsNewSiteRequest(t *testing.T) {
+	tests := []struct {
+		name             string
+		request          CreateSiteRequest
+		expectedFormArgs QueryArgs
+	}{
+		{
+			name: "valid new site request with domain and timezone",
+			request: CreateSiteRequest{
+				Domain:   "mydomain.com",
+				Timezone: "Europe/Lisbon",
+			},
+			expectedFormArgs: QueryArgs{
+				QueryArg{Name: "domain", Value: "mydomain.com"},
+				QueryArg{Name: "timezone", Value: "Europe/Lisbon"},
+			},
+		},
+		{
+			name: "valid new site request with domain and without timezone",
+			request: CreateSiteRequest{
+				Domain: "mydomain.com",
+			},
+			expectedFormArgs: QueryArgs{
+				QueryArg{Name: "domain", Value: "mydomain.com"},
+			},
+		},
+	}
+	for _, test := range tests {
+		actualFormArgs := test.request.toFormArgs()
+		equal := actualFormArgs.equalTo(test.expectedFormArgs)
+		if !equal {
+			t.Fatalf("test '%s' failed: non-equal form args %v and %v",
+				test.name, test.expectedFormArgs, actualFormArgs)
+		}
+	}
+
 }

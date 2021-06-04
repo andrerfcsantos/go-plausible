@@ -77,13 +77,13 @@ func (s *Site) Aggregate(query AggregateQuery) (AggregateResult, error) {
 		return AggregateResult{}, fmt.Errorf("error performing aggregate request: %w", err)
 	}
 
-	var res rawAggregateResponse
+	var res rawAggregateResult
 	err = json.Unmarshal(data, &res)
 	if err != nil {
 		return AggregateResult{}, fmt.Errorf("error parsing aggregate response: %w", err)
 	}
 
-	return res.toAggregateResponse(), nil
+	return res.toAggregateResult(), nil
 }
 
 // Timeseries performs a time series query.
@@ -140,11 +140,11 @@ func (s *Site) Breakdown(query BreakdownQuery) (BreakdownResult, error) {
 //
 // Note: This endpoint requires an API token with permissions to use the sites provisioning API.
 // Check https://plausible.io/docs/sites-api for more info
-func (s *Site) SharedLink(query SharedLinkQuery) (SharedLinkResult, error) {
+func (s *Site) SharedLink(query SharedLinkRequest) (SharedLinkResult, error) {
 
 	ok, invalidReason := query.Validate()
 	if !ok {
-		return SharedLinkResult{}, errors.New("invalid shared link request query: " + invalidReason)
+		return SharedLinkResult{}, errors.New("invalid shared link request: " + invalidReason)
 	}
 
 	data, err := s.doRequest("PUT", "sites/shared-links", nil, query.toFormArgs(s.ID()))

@@ -12,6 +12,9 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+// DefaultBaseURL contains the default base url for the plausible API.
+const DefaultBaseURL = "https://plausible.io/api/v1/"
+
 // Client handles the interaction with the plausible API.
 //
 // The client must be initialized with a token using either NewClient or NewClientWithBaseURL.
@@ -30,7 +33,7 @@ type Client struct {
 // If you need to use another base URL for the API, create a client using NewClientWithBaseURL instead.
 func NewClient(token string) *Client {
 	return &Client{
-		baseURL: "https://plausible.io/api/v1/",
+		baseURL: DefaultBaseURL,
 		token:   token,
 		client:  &fasthttp.Client{},
 	}
@@ -53,6 +56,16 @@ func NewClientWithBaseURL(token string, baseURL string) *Client {
 		token:   token,
 		client:  &fasthttp.Client{},
 	}
+}
+
+// BaseURL returns the base URL this client is using.
+func (c *Client) BaseURL() string {
+	return c.baseURL
+}
+
+// Token returns the token this client is using.
+func (c *Client) Token() string {
+	return c.token
 }
 
 // Site returns a site handler for a given site ID. The returned handler can be used to query the API for

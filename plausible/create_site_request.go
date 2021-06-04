@@ -23,7 +23,7 @@ func (csr *CreateSiteRequest) toFormArgs() QueryArgs {
 }
 
 // Validate tells whether the request is valid or not.
-// If the request is not valid, a string explaining why the query is not valid will be returned.
+// If the request is not valid, a string explaining why the request is not valid will be returned.
 func (csr *CreateSiteRequest) Validate() (bool, string) {
 	if csr.Domain == "" {
 		return false, "a domain must be specified in a request to create a new site"

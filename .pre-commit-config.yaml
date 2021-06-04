@@ -6,7 +6,6 @@ repos:
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
-    #-   id: check-yaml
     -   id: check-added-large-files
 -   repo: https://github.com/tekwizely/pre-commit-golang
     rev: v0.8.3
@@ -19,6 +18,7 @@ repos:
     # Go Test
     #
     -   id: go-test-repo-mod
+        args: ["-parallel=4"]
     #
     # Go Vet
     #

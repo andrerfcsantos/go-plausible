@@ -1,6 +1,6 @@
 package plausible
 
-// Filter represents an API query filter over properties of the stats data.
+// Filter represents an API rawAggregateResult filter over properties of the stats data.
 // The filter is a logic AND over all its properties and values.
 // Filters are used when making a request to the API to narrow the information returned.
 type Filter struct {
@@ -104,6 +104,11 @@ func (f Filter) ByCustomProperty(propertyName string, value string) Filter {
 	return f
 }
 
+// Count returns the number of properties in the filter
+func (f Filter) Count() int {
+	return len(f.Properties)
+}
+
 func (f Filter) toFilterString() string {
 
 	s := ""
@@ -121,9 +126,14 @@ func (f Filter) toFilterString() string {
 }
 
 func (f Filter) toQueryArgs() QueryArgs {
-	return QueryArgs{
-		{Name: "filters", Value: f.toFilterString()},
+
+	var qArgs QueryArgs
+
+	if !f.IsEmpty() {
+		qArgs = append(qArgs, QueryArg{Name: "filters", Value: f.toFilterString()})
 	}
+
+	return qArgs
 }
 
 // IsEmpty tells if the filter has no properties
