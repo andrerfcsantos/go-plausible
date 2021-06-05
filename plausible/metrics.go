@@ -1,6 +1,8 @@
 package plausible
 
 // Metric represents a Plausible metric. Metrics are used as parts of queries to request specific information.
+// Most users won't need to work with this type directly and can just use the metric constant values
+// defined on this package when a Metric value is needed.
 type Metric string
 
 // Metric values:

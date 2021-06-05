@@ -25,14 +25,21 @@ func (s *Site) ID() string {
 	return s.id
 }
 
-func (s *Site) acquireRequest(method, endpoint string, queries QueryArgs) *fasthttp.Request {
-	req := s.plausibleClient.acquireRequest(method, endpoint, queries)
+func (s *Site) acquireRequest(method, endpoint string, queries QueryArgs, formVals QueryArgs) (*fasthttp.Request, error) {
+	req, err := s.plausibleClient.acquireRequest(method, endpoint, queries, formVals)
+	if err != nil {
+		return nil, err
+	}
 	req.URI().QueryArgs().Add("site_id", s.id)
-	return req
+	return req, nil
 }
 
-func (s *Site) doRequest(method, endpoint string, queries QueryArgs) ([]byte, error) {
-	req := s.acquireRequest(method, endpoint, queries)
+func (s *Site) doRequest(method, endpoint string, queries QueryArgs, formVals QueryArgs) ([]byte, error) {
+	req, err := s.acquireRequest(method, endpoint, queries, formVals)
+	if err != nil {
+		return nil, err
+	}
+
 	data, err := doRequest(s.httpClient, req)
 	if err != nil {
 		return nil, err
@@ -42,7 +49,7 @@ func (s *Site) doRequest(method, endpoint string, queries QueryArgs) ([]byte, er
 
 // CurrentVisitors gets the current visitors for the site.
 func (s *Site) CurrentVisitors() (int, error) {
-	data, err := s.doRequest("GET", "stats/realtime/visitors", nil)
+	data, err := s.doRequest("GET", "stats/realtime/visitors", nil, nil)
 	if err != nil {
 		return 0, fmt.Errorf("error performing current visitors request: %w", err)
 	}
@@ -65,18 +72,18 @@ func (s *Site) Aggregate(query AggregateQuery) (AggregateResult, error) {
 		return AggregateResult{}, errors.New("invalid aggregate query: " + invalidReason)
 	}
 
-	data, err := s.doRequest("GET", "stats/aggregate", query.toQueryArgs())
+	data, err := s.doRequest("GET", "stats/aggregate", query.toQueryArgs(), nil)
 	if err != nil {
 		return AggregateResult{}, fmt.Errorf("error performing aggregate request: %w", err)
 	}
 
-	var res rawAggregateResponse
+	var res rawAggregateResult
 	err = json.Unmarshal(data, &res)
 	if err != nil {
 		return AggregateResult{}, fmt.Errorf("error parsing aggregate response: %w", err)
 	}
 
-	return res.toAggregateResponse(), nil
+	return res.toAggregateResult(), nil
 }
 
 // Timeseries performs a time series query.
@@ -90,7 +97,7 @@ func (s *Site) Timeseries(query TimeseriesQuery) (TimeseriesResult, error) {
 		return TimeseriesResult{}, errors.New("invalid timeline query: " + invalidReason)
 	}
 
-	data, err := s.doRequest("GET", "stats/timeseries", query.toQueryArgs())
+	data, err := s.doRequest("GET", "stats/timeseries", query.toQueryArgs(), nil)
 	if err != nil {
 		return TimeseriesResult{}, fmt.Errorf("error performing timeline request: %w", err)
 	}
@@ -114,7 +121,7 @@ func (s *Site) Breakdown(query BreakdownQuery) (BreakdownResult, error) {
 		return BreakdownResult{}, errors.New("invalid breakdown query: " + invalidReason)
 	}
 
-	data, err := s.doRequest("GET", "stats/breakdown", query.toQueryArgs())
+	data, err := s.doRequest("GET", "stats/breakdown", query.toQueryArgs(), nil)
 	if err != nil {
 		return BreakdownResult{}, fmt.Errorf("error performing breakdown request: %w", err)
 	}
@@ -126,4 +133,30 @@ func (s *Site) Breakdown(query BreakdownQuery) (BreakdownResult, error) {
 	}
 
 	return res.Results, nil
+}
+
+// SharedLink creates a shared link with a given name.
+// If the link already exists, its information will be returned.
+//
+// Note: This endpoint requires an API token with permissions to use the sites provisioning API.
+// Check https://plausible.io/docs/sites-api for more info
+func (s *Site) SharedLink(query SharedLinkRequest) (SharedLinkResult, error) {
+
+	ok, invalidReason := query.Validate()
+	if !ok {
+		return SharedLinkResult{}, errors.New("invalid shared link request: " + invalidReason)
+	}
+
+	data, err := s.doRequest("PUT", "sites/shared-links", nil, query.toFormArgs(s.ID()))
+	if err != nil {
+		return SharedLinkResult{}, fmt.Errorf("error performing shared link request: %v", err)
+	}
+
+	var res SharedLinkResult
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return SharedLinkResult{}, fmt.Errorf("error parsing shared link response: %w", err)
+	}
+
+	return res, nil
 }

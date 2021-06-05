@@ -79,7 +79,7 @@ type AggregateResult struct {
 	VisitorsChange int `json:"visitors_change"`
 }
 
-type rawAggregateResponse struct {
+type rawAggregateResult struct {
 	Result *struct {
 		BounceRate struct {
 			Change float64 `json:"change"`
@@ -100,7 +100,7 @@ type rawAggregateResponse struct {
 	} `json:"results,omitempty"`
 }
 
-func (r *rawAggregateResponse) toAggregateResponse() AggregateResult {
+func (r *rawAggregateResult) toAggregateResult() AggregateResult {
 	var res AggregateResult
 
 	if r.Result == nil {

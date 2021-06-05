@@ -2,7 +2,8 @@ package plausible
 
 import "fmt"
 
-// PropertyName represents the name of a property.
+// PropertyName represents the name of a property. Check the constants of this package to see a list of PropertyName
+// values ready to use.
 type PropertyName string
 
 // PropertyName values:
@@ -59,7 +60,10 @@ func (p *Property) toFilterString() string {
 	return fmt.Sprintf("%s==%s", p.Name, p.Value)
 }
 
-// CustomPropertyName returns the PropertyName for a custom property with a given name.
+// CustomPropertyName makes a PropertyName for a custom property with a given name.
+// A custom PropertyName is needed to create a Property related to a custom event.
+// Also check the function CustomProperty for an easy way to create a property with
+// a value and a custom name.
 func CustomPropertyName(propertyName string) PropertyName {
 	return PropertyName("event:props:" + propertyName)
 }

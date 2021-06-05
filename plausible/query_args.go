@@ -17,6 +17,25 @@ func (qa *QueryArgs) Merge(qArgsList ...QueryArgs) *QueryArgs {
 	return qa
 }
 
+func (qa QueryArgs) equalTo(other QueryArgs) bool {
+	size, otherSize := qa.Count(), other.Count()
+
+	if size != otherSize {
+		return false
+	}
+
+	for i := 0; i < size; i++ {
+		if qa[i].Name != other[i].Name {
+			return false
+		}
+
+		if qa[i].Value != other[i].Value {
+			return false
+		}
+	}
+	return true
+}
+
 // Count returns the number of query arguments in the list
 func (qa *QueryArgs) Count() int {
 	return len(*qa)

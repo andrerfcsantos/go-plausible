@@ -20,7 +20,7 @@ func (dt *DateTime) String() string {
 
 // toPlausibleFormat converts the DateTime to a string format that the plausible API uses.
 func (dt *DateTime) toPlausibleFormat() string {
-	return fmt.Sprintf("%s %s", dt.Date.toPlausibleFormat(), dt.Date.toPlausibleFormat())
+	return fmt.Sprintf("%s %s", dt.Date.toPlausibleFormat(), dt.Time.toPlausibleFormat())
 }
 
 // Time represents the basic information about a time of day.
@@ -41,7 +41,7 @@ func (t *Time) String() string {
 
 // toPlausibleFormat converts the Time to a string format that the plausible API uses.
 func (t *Time) toPlausibleFormat() string {
-	return fmt.Sprintf("%0d:%02d:%02d", t.Hour, t.Minute, t.Second)
+	return fmt.Sprintf("%02d:%02d:%02d", t.Hour, t.Minute, t.Second)
 }
 
 // Date represents the basic information about a date.
