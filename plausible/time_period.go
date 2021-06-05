@@ -103,7 +103,7 @@ func (tp TimePeriod) IsEmpty() bool {
 	return tp.Period == ""
 }
 
-// OfDate adds date information to a time period.
+// OfDate adds date information to a time period. An alias of FromDate.
 func (tp TimePeriod) OfDate(date Date) TimePeriod {
 	return tp.FromDate(date)
 }

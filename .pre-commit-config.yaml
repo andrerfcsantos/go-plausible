@@ -18,7 +18,7 @@ repos:
     # Go Test
     #
     -   id: go-test-repo-mod
-        args: ["-parallel=4"]
+        args: ["-parallel=4", "-run=^(TestUnit|TestIntegration)"]
     #
     # Go Vet
     #

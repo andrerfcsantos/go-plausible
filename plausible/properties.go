@@ -62,6 +62,8 @@ func (p *Property) toFilterString() string {
 
 // CustomPropertyName makes a PropertyName for a custom property with a given name.
 // A custom PropertyName is needed to create a Property related to a custom event.
+// Also check the function CustomProperty for an easy way to create a property with
+// a value and a custom name.
 func CustomPropertyName(propertyName string) PropertyName {
 	return PropertyName("event:props:" + propertyName)
 }
