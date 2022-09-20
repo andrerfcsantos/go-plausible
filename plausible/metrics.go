@@ -15,6 +15,10 @@ const (
 	BounceRate = Metric("bounce_rate")
 	// VisitDuration represents the visit duration metric
 	VisitDuration = Metric("visit_duration")
+	// Visits represents the number of visits/sessions metric
+	Visits = Metric("visits")
+	// Events represents the number of events (pageviews + custom events) metric
+	Events = Metric("events")
 )
 
 // AllMetrics is an utility function that returns all the metrics.
@@ -22,7 +26,7 @@ const (
 // However, please note that querying all metrics is not allowed in all type of queries.
 func AllMetrics() Metrics {
 	return Metrics{
-		Visitors, PageViews, BounceRate, VisitDuration,
+		Visitors, PageViews, BounceRate, VisitDuration, Visits,
 	}
 }
 

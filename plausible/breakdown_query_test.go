@@ -72,7 +72,7 @@ func TestUnitToQueryArgsBreakdownQuery(t *testing.T) {
 			expectedQueryArgs: QueryArgs{
 				QueryArg{Name: "property", Value: "visit:browser"},
 				QueryArg{Name: "period", Value: "day"},
-				QueryArg{Name: "metrics", Value: "visitors,pageviews,bounce_rate,visit_duration"},
+				QueryArg{Name: "metrics", Value: "visitors,pageviews,bounce_rate,visit_duration,visits"},
 				QueryArg{Name: "limit", Value: "1"},
 				QueryArg{Name: "page", Value: "1"},
 				QueryArg{Name: "filters", Value: "visit:os==Windows;event:page==/"},

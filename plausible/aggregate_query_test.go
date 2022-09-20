@@ -69,7 +69,7 @@ func TestUnitToQueryArgsAggregateQuery(t *testing.T) {
 			expectedQueryArgs: QueryArgs{
 				QueryArg{Name: "period", Value: "custom"},
 				QueryArg{Name: "date", Value: "2021-01-01,2021-02-01"},
-				QueryArg{Name: "metrics", Value: "visitors,pageviews,bounce_rate,visit_duration"},
+				QueryArg{Name: "metrics", Value: "visitors,pageviews,bounce_rate,visit_duration,visits"},
 				QueryArg{Name: "filters", Value: "visit:os==Windows;event:page==/"},
 				QueryArg{Name: "compare", Value: "previous_period"},
 			},

@@ -65,10 +65,10 @@ type AggregateResult struct {
 	PageviewsChange int `json:"pageviews_change"`
 
 	// VisitDuration represents the visit duration result for the query.
-	// Only use this field if you included the Visit metric in your query
+	// Only use this field if you included the VisitDuration metric in your query
 	VisitDuration float64 `json:"visit_duration"`
 	// VisitDurationChange represents the visit duration change compared to the previous period.
-	// Only use this field if you included the Visit metric in your query and ComparePreviousPeriod was set to true.
+	// Only use this field if you included the VisitVisitDuration metric in your query and ComparePreviousPeriod was set to true.
 	VisitDurationChange float64 `json:"visit_duration_change"`
 
 	// Visitors represents the number of visitors result for the query.
@@ -77,6 +77,20 @@ type AggregateResult struct {
 	// VisitorsChange represents the change in the number of visitors compared to the previous period.
 	// Only use this field if you included the Visitors metric in your query and ComparePreviousPeriod was set to true.
 	VisitorsChange int `json:"visitors_change"`
+
+	// Visits represents the visits result for the query.
+	// Only use this field if you included the Visits metric in your query
+	Visits int `json:"visits"`
+	// VisitsChange represents the visits change compared to the previous period.
+	// Only use this field if you included the Visits metric in your query and ComparePreviousPeriod was set to true.
+	VisitsChange int `json:"visits_change"`
+
+	// Events represents the events result for the query.
+	// Only use this field if you included the Events metric in your query
+	Events int `json:"events"`
+	// EventsChange represents the events change compared to the previous period.
+	// Only use this field if you included the Events metric in your query and ComparePreviousPeriod was set to true.
+	EventsChange int `json:"events_change"`
 }
 
 type rawAggregateResult struct {
@@ -85,6 +99,10 @@ type rawAggregateResult struct {
 			Change float64 `json:"change"`
 			Value  float64 `json:"value"`
 		} `json:"bounce_rate,omitempty"`
+		Events struct {
+			Change int `json:"change"`
+			Value  int `json:"value"`
+		} `json:"events,omitempty"`
 		Pageviews struct {
 			Change int `json:"change"`
 			Value  int `json:"value"`
@@ -97,6 +115,10 @@ type rawAggregateResult struct {
 			Change int `json:"change"`
 			Value  int `json:"value"`
 		} `json:"visitors,omitempty"`
+		Visits struct {
+			Change int `json:"change"`
+			Value  int `json:"value"`
+		} `json:"visits,omitempty"`
 	} `json:"results,omitempty"`
 }
 
@@ -107,17 +129,23 @@ func (r *rawAggregateResult) toAggregateResult() AggregateResult {
 		return res
 	}
 
+	res.BounceRate = r.Result.BounceRate.Value
+	res.BounceRateChange = r.Result.BounceRate.Change
+
+	res.Events = r.Result.Events.Value
+	res.EventsChange = r.Result.Events.Change
+
 	res.Pageviews = r.Result.Pageviews.Value
 	res.PageviewsChange = r.Result.Pageviews.Change
+
+	res.VisitDuration = r.Result.VisitDuration.Value
+	res.VisitDurationChange = r.Result.VisitDuration.Change
 
 	res.Visitors = r.Result.Visitors.Value
 	res.VisitorsChange = r.Result.Visitors.Change
 
-	res.BounceRate = r.Result.BounceRate.Value
-	res.BounceRateChange = r.Result.BounceRate.Change
-
-	res.VisitDuration = r.Result.VisitDuration.Value
-	res.VisitDurationChange = r.Result.VisitDuration.Change
+	res.Visits = r.Result.Visits.Value
+	res.VisitsChange = r.Result.Visits.Change
 
 	return res
 }
