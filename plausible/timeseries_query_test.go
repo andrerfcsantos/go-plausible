@@ -63,7 +63,7 @@ func TestUnitToQueryArgsTimeseriesQuery(t *testing.T) {
 			expectedQueryArgs: QueryArgs{
 				QueryArg{Name: "period", Value: "day"},
 				QueryArg{Name: "filters", Value: "visit:os==Windows"},
-				QueryArg{Name: "metrics", Value: "visitors,pageviews,bounce_rate,visit_duration"},
+				QueryArg{Name: "metrics", Value: "visitors,pageviews,bounce_rate,visit_duration,visits"},
 				QueryArg{Name: "interval", Value: "date"},
 			},
 			isValid: true,

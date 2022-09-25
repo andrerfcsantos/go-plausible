@@ -189,24 +189,24 @@ To know more about properties, see [Plausible Docs: Filtering](https://plausible
 Metrics are aggregate information about the data. All queries have the option for you to choose the metrics you want to
 see included in the results.
 
-There are 4 metrics currently that you can ask the results for: number of visitors, number of page views, visit duration
-and bounce rate. In this library, these metrics are represented by
+There are 6 metrics currently that you can ask the results for: number of visitors, number of page views, visit duration, bounce rate, visits and events.
+In this library, these metrics are represented by
 the [Metric](https://pkg.go.dev/github.com/andrerfcsantos/go-plausible/plausible#Metric)
-type. There are 4 constants of type `Metric`, each one representing one of the 4 metrics: `Visitors`,
-`PageViews`, `BounceRate` and `VisitDuration`.
+type. There are 6 constants of type `Metric`, each one representing one of the 6 metrics: `Visitors`,
+`PageViews`, `BounceRate`, `VisitDuration`, `Events` and `Visits`
 
 For instance, if for a query you only want information about the pageviews and number of visitors, you can pass this to
 the query in the metrics parameter:
 
 ```go
 metrics := plausible.Metrics {
-plausible.Visitors,
-plausible.PageViews,
+	plausible.Visitors,
+	plausible.PageViews,
 },
 ```
 
 For convenience, when you want to get information about all metrics, there's a function `AllMetrics()`
-that returns all the 4 metrics. However, please note that not all queries support requests for all metrics. For that
+that returns all the 6 metrics. However, please note that not all queries support requests for all metrics. For that
 reason, use requests for all metrics with caution. If you try to use a metric in a query that does not support that
 metric, you will get an error message saying which property was at fault.
 
