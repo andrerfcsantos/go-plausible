@@ -79,6 +79,10 @@ type MetricsResult struct {
 	// Visitors contains information about the number of visitors.
 	// This field must only be used if the query requested the visitors metric.
 	Visitors int `json:"visitors"`
+
+	// Visits contains information about the number of visits per session.
+	// This field must only be used if the query requested the visits metric.
+	Visits int `json:"visits"`
 }
 
 // BounceRate returns the bounce rate associated with this result.
