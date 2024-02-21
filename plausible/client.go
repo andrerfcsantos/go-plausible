@@ -63,6 +63,10 @@ func (c *Client) BaseURL() string {
 	return c.baseURL
 }
 
+func (c *Client) Events(domainName string) *EventRecorder {
+	return NewEventRecorder(domainName, c.client, c.baseURL)
+}
+
 // Token returns the token this client is using.
 func (c *Client) Token() string {
 	return c.token
