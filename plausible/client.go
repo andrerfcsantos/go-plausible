@@ -63,6 +63,18 @@ func (c *Client) BaseURL() string {
 	return c.baseURL
 }
 
+// Record an event on plausible.
+func (c *Client) PushEvent(ev EventRequest) ([]byte, error) {
+	e := &event{
+		plausibleClient: c,
+	}
+	req, err := e.acquireRequest(ev)
+	if err != nil {
+		return nil, err
+	}
+	return doRequest(c.client, req)
+}
+
 // Token returns the token this client is using.
 func (c *Client) Token() string {
 	return c.token

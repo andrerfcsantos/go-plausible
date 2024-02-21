@@ -66,6 +66,21 @@ func main() {
 
 	// Use 'mysite' and the 'myothersite' handlers to query stats for the sites
 	// ...
+
+	// push an event from your http handler to Plausible
+	func home(w http.ResponseWriter, r *http.Request) {
+		e := plausible.EventRequest {
+			Domain:  "example.org",
+			Name:    "pageview",
+			URL:     r.URL,
+			Headers: map[string]string{
+				"user-agent":      r.Header.Get("user-agent"),
+				"x-forwarded-for": r.Header.Get("x-forwarded-for"),
+			}
+		}
+
+		resp, err := plausible.Event().Push(e)
+	}
 }
 ```
 
