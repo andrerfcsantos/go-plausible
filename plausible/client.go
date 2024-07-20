@@ -144,7 +144,7 @@ func (c *Client) CreateNewSite(siteRequest CreateSiteRequest) (CreateSiteResult,
 	var res CreateSiteResult
 	err = json.Unmarshal(data, &res)
 	if err != nil {
-		return CreateSiteResult{}, fmt.Errorf("error parsing shared link response: %w", err)
+		return CreateSiteResult{}, fmt.Errorf("error parsing create site response: %w", err)
 	}
 
 	return res, nil
