@@ -149,3 +149,24 @@ func (c *Client) CreateNewSite(siteRequest CreateSiteRequest) (CreateSiteResult,
 
 	return res, nil
 }
+
+// ListSites list existing sites in Plausible
+func (c *Client) ListSites(listRequest ListSitesRequest) (ListSitesResult, error) {
+	req, err := c.acquireRequest("GET", "sites", listRequest.toQueryArgs(), nil)
+	if err != nil {
+		return ListSitesResult{}, fmt.Errorf("error acquiring request: %v", err)
+	}
+
+	data, err := doRequest(c.client, req)
+	if err != nil {
+		return ListSitesResult{}, fmt.Errorf("error performing request to list sites: %v", err)
+	}
+
+	var res ListSitesResult
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return ListSitesResult{}, fmt.Errorf("error parsing list sites response: %w", err)
+	}
+
+	return res, nil
+}
