@@ -62,6 +62,22 @@ func (s *Site) CurrentVisitors() (int, error) {
 	return visitors, nil
 }
 
+// Gets details of a site.
+func (s *Site) Get() (SiteResult, error) {
+	data, err := s.doRequest("GET", fmt.Sprintf("sites/%s", s.id), nil, nil)
+	if err != nil {
+		return SiteResult{}, fmt.Errorf("error performing get request: %w", err)
+	}
+
+	var res SiteResult
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return SiteResult{}, fmt.Errorf("error parsing get response: %w", err)
+	}
+
+	return res, nil
+}
+
 // Aggregate performs an aggregate query.
 // An aggregate query reports data for metrics aggregated over a period of time,
 // eg, "total number of visitors/pageviews for a particular day".
