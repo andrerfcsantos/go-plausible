@@ -62,8 +62,8 @@ func (s *Site) CurrentVisitors() (int, error) {
 	return visitors, nil
 }
 
-// Gets details of a site.
-func (s *Site) Get() (SiteResult, error) {
+// Details contains information about a site
+func (s *Site) Details() (SiteResult, error) {
 	data, err := s.doRequest("GET", fmt.Sprintf("sites/%s", s.id), nil, nil)
 	if err != nil {
 		return SiteResult{}, fmt.Errorf("error performing get request: %w", err)

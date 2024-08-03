@@ -1,5 +1,10 @@
 package plausible
 
+import (
+	"github.com/andrerfcsantos/go-plausible/plausible/urlmaker/pagination"
+	"strconv"
+)
+
 // QueryArgs represents a list of query arguments.
 type QueryArgs []QueryArg
 
@@ -47,4 +52,21 @@ type QueryArg struct {
 	Name string
 	// Value is the value for the query argument
 	Value string
+}
+
+// QueryArgsFromPaginator takes the information on a paginator and converts it into query args
+func QueryArgsFromPaginator(paginator *pagination.Paginator) QueryArgs {
+	queryArgs := QueryArgs{}
+
+	if paginator.After != "" {
+		queryArgs.Add(QueryArg{Name: "after", Value: paginator.After})
+	}
+	if paginator.Before != "" {
+		queryArgs.Add(QueryArg{Name: "before", Value: paginator.Before})
+	}
+	if paginator.Limit != 0 {
+		queryArgs.Add(QueryArg{Name: "limit", Value: strconv.Itoa(paginator.Limit)})
+	}
+
+	return queryArgs
 }

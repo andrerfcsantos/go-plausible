@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"strings"
 
+	"github.com/andrerfcsantos/go-plausible/plausible/urlmaker/pagination"
 	"github.com/valyala/fasthttp"
 )
 
@@ -150,9 +151,13 @@ func (c *Client) CreateNewSite(siteRequest CreateSiteRequest) (CreateSiteResult,
 	return res, nil
 }
 
-// ListSites list existing sites in Plausible
-func (c *Client) ListSites(listRequest ListSitesRequest) (ListSitesResult, error) {
-	req, err := c.acquireRequest("GET", "sites", listRequest.toQueryArgs(), nil)
+// ListSites lists existing sites in Plausible
+func (c *Client) ListSites(pagOptions ...pagination.Option) (ListSitesResult, error) {
+
+	paginator := pagination.NewPaginator(pagOptions...)
+	qArgs := QueryArgsFromPaginator(paginator)
+
+	req, err := c.acquireRequest("GET", "sites", qArgs, nil)
 	if err != nil {
 		return ListSitesResult{}, fmt.Errorf("error acquiring request: %v", err)
 	}
@@ -177,5 +182,5 @@ func (c *Client) PushEvent(ev EventRequest) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("acquiring event request from client: %w", err)
 	}
-	return doRequest(s.httpClient, req)
+	return doRequest(c.client, req)
 }

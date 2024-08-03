@@ -433,7 +433,7 @@ func main() {
 	// Warning: This token must have permissions to the site provisioning API
 	client := plausible.NewClient("<your_api_token>")
 
-	sites, err := client.ListSites(plausible.ListSitesRequest{})
+	sites, err := client.ListSites()
 
 	if err != nil {
 		// handle error
@@ -442,6 +442,38 @@ func main() {
 	fmt.Printf("Sites %s\n", sites.Sites)
 }
 ```
+
+If the response contains a lot of sites, it will be paginated. To access other pages, use the pagination options:
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/andrerfcsantos/go-plausible/plausible"
+    "github.com/andrerfcsantos/go-plausible/plausible/urlmaker/pagination"
+)
+
+func main() {
+	// Create a client with an API token
+	// Warning: This token must have permissions to the site provisioning API
+	client := plausible.NewClient("<your_api_token>")
+
+    sites, err := client.ListSites(
+      pagination.After("awebsite"),
+      pagination.Before("otherwebsite"),
+      pagination.Limit(20),
+    )
+
+	if err != nil {
+		// handle error
+	}
+
+	fmt.Printf("Sites %s\n", sites.Sites)
+}
+```
+
+
 
 ### <a name="provisioning-api-get-site"></a> Get site
 
@@ -463,13 +495,13 @@ func main() {
 	// Get an handler to perform queries for a given site
 	mysite := client.Site("example.com")
 
-	siteResult, err := mysite.Get()
+	siteResult, err := mysite.Details()
 
 	if err != nil {
 		// handle error
 	}
 
-	fmt.Printf("Site %s\n", siteResult.Timezone)
+	fmt.Printf("Site %v\n", siteResult)
 }
 ```
 
