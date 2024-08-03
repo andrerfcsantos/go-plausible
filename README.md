@@ -32,6 +32,8 @@ It currently supports the full API of Plausible, which includes:
     * [Get/Create Shared Links](#provisioning-api-shared-links)
     * [Create new sites](#provisioning-api-create-new-sites)
 
+* [Events API](#events-api)
+
 * [Tests](#tests)
     * [Unit Tests](#unit-tests)
     * [Integration Tests](#integration-tests)
@@ -65,9 +67,6 @@ func main() {
 
 	// You can reuse the same client to get handlers for additional sites
 	myothersite := client.Site("otherexample.com")
-
-	// Use 'mysite' and the 'myothersite' handlers to query stats for the sites
-	// ...
 }
 ```
 
@@ -545,6 +544,35 @@ func main() {
 	}
 	fmt.Printf("Domain: %s | Timezone: %s\n", siteResult.Domain, siteResult.Timezone)
 
+}
+```
+
+## <a name="events-api"></a> Events API
+
+Push events with `site.PushEvent()`
+
+```go
+func main() {
+    // Create a client with an API token
+    client := plausible.NewClient("<your_api_token>")
+
+	// Get an handler to perform queries for a given site
+	mysite := client.Site("example.com")
+	
+      e := plausible.EventRequest {
+		  EventData: EventData{
+            Domain:  "example.org",
+            Name:    "pageview",
+            URL:     "https://example.com/awesome_page",
+		  }
+		  UserAgent:  "user-agent"
+      }
+
+      _, err := client.PushEvent(e)
+      if err != nil {
+        // handle error
+      }
+	}
 }
 ```
 

@@ -92,7 +92,7 @@ func (c *Client) acquireRequest(method, endpoint string, queries QueryArgs, form
 		req.URI().QueryArgs().Add(q.Name, q.Value)
 	}
 
-	if formData.Count() > 0 {
+	if formData != nil && formData.Count() > 0 {
 		body := &bytes.Buffer{}
 		mpwriter := multipart.NewWriter(body)
 
@@ -169,4 +169,13 @@ func (c *Client) ListSites(listRequest ListSitesRequest) (ListSitesResult, error
 	}
 
 	return res, nil
+}
+
+// PushEvent records an event on plausible
+func (c *Client) PushEvent(ev EventRequest) ([]byte, error) {
+	req, err := c.acquireEventRequest(ev)
+	if err != nil {
+		return nil, fmt.Errorf("acquiring event request from client: %w", err)
+	}
+	return doRequest(s.httpClient, req)
 }
