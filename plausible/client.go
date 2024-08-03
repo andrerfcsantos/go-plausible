@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"strings"
 
+	"github.com/andrerfcsantos/go-plausible/plausible/urlmaker/pagination"
 	"github.com/valyala/fasthttp"
 )
 
@@ -144,7 +145,32 @@ func (c *Client) CreateNewSite(siteRequest CreateSiteRequest) (CreateSiteResult,
 	var res CreateSiteResult
 	err = json.Unmarshal(data, &res)
 	if err != nil {
-		return CreateSiteResult{}, fmt.Errorf("error parsing shared link response: %w", err)
+		return CreateSiteResult{}, fmt.Errorf("error parsing create site response: %w", err)
+	}
+
+	return res, nil
+}
+
+// ListSites lists existing sites in Plausible
+func (c *Client) ListSites(pagOptions ...pagination.Option) (ListSitesResult, error) {
+
+	paginator := pagination.NewPaginator(pagOptions...)
+	qArgs := QueryArgsFromPaginator(paginator)
+
+	req, err := c.acquireRequest("GET", "sites", qArgs, nil)
+	if err != nil {
+		return ListSitesResult{}, fmt.Errorf("error acquiring request: %v", err)
+	}
+
+	data, err := doRequest(c.client, req)
+	if err != nil {
+		return ListSitesResult{}, fmt.Errorf("error performing request to list sites: %v", err)
+	}
+
+	var res ListSitesResult
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return ListSitesResult{}, fmt.Errorf("error parsing list sites response: %w", err)
 	}
 
 	return res, nil
@@ -156,5 +182,5 @@ func (c *Client) PushEvent(ev EventRequest) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("acquiring event request from client: %w", err)
 	}
-	return doRequest(s.httpClient, req)
+	return doRequest(c.client, req)
 }

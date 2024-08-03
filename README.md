@@ -27,6 +27,8 @@ It currently supports the full API of Plausible, which includes:
     * [Breakdown Queries](#breakdown-queries)
 
 * [Site Provisioning API](#site-provisioning-api)
+    * [List sites](#provisioning-api-get-sites)
+    * [Get site](#provisioning-api-get-site)
     * [Get/Create Shared Links](#provisioning-api-shared-links)
     * [Create new sites](#provisioning-api-create-new-sites)
 
@@ -413,6 +415,95 @@ sure you have a token with permissions for the site provisioning API before atte
 go here to know more about how to get a token for this API:
 
 * [Plausible Docs: Site Provisioning API](https://plausible.io/docs/sites-api)
+
+### <a name="provisioning-api-get-sites"></a> List sites
+
+Gets a list of existing sites your Plausible account can access.
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/andrerfcsantos/go-plausible/plausible"
+)
+
+func main() {
+	// Create a client with an API token
+	// Warning: This token must have permissions to the site provisioning API
+	client := plausible.NewClient("<your_api_token>")
+
+	sites, err := client.ListSites()
+
+	if err != nil {
+		// handle error
+	}
+
+	fmt.Printf("Sites %s\n", sites.Sites)
+}
+```
+
+If the response contains a lot of sites, it will be paginated. To access other pages, use the pagination options:
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/andrerfcsantos/go-plausible/plausible"
+    "github.com/andrerfcsantos/go-plausible/plausible/urlmaker/pagination"
+)
+
+func main() {
+	// Create a client with an API token
+	// Warning: This token must have permissions to the site provisioning API
+	client := plausible.NewClient("<your_api_token>")
+
+    sites, err := client.ListSites(
+      pagination.After("awebsite"),
+      pagination.Before("otherwebsite"),
+      pagination.Limit(20),
+    )
+
+	if err != nil {
+		// handle error
+	}
+
+	fmt.Printf("Sites %s\n", sites.Sites)
+}
+```
+
+
+
+### <a name="provisioning-api-get-site"></a> Get site
+
+Gets details of a site. Your Plausible account must have access to it.
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/andrerfcsantos/go-plausible/plausible"
+)
+
+func main() {
+	// Create a client with an API token
+	// Warning: This token must have permissions to the site provisioning API
+	client := plausible.NewClient("<your_api_token>")
+
+	// Get an handler to perform queries for a given site
+	mysite := client.Site("example.com")
+
+	siteResult, err := mysite.Details()
+
+	if err != nil {
+		// handle error
+	}
+
+	fmt.Printf("Site %v\n", siteResult)
+}
+```
 
 ### <a name="provisioning-api-shared-links"></a> Get or create Shared Links
 
