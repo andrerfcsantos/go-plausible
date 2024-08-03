@@ -4,63 +4,79 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/url"
-
 	"github.com/valyala/fasthttp"
 )
 
-type event struct {
-	plausibleClient *Client
-}
-
-// EventRequest represents data to record events on plausible
-type EventRequest struct {
-	// the domain of your site (must match exactly)
+// EventData represents the data of an event
+type EventData struct {
+	// Domain of the site
 	Domain string `json:"domain"`
-
-	// the name of the event, e.g. 'pageview', otherwise a custom event
+	// Name is the name of the event, e.g. 'pageview', otherwise a custom event
 	Name string `json:"name"`
 
-	// the URL of the current request
-	URL *url.URL `json:"url"`
+	// URL of the current request
+	URL string `json:"url"`
 
-	// optional parameters
-	Referrer string            `json:"referrer,omitempty"`
-	Props    map[string]string `json:"props,omitempty"`
-	Revenue  Revenue           `json:"revenue,omitempty"`
-
-	// these are not passed on
-	Headers map[string]string `json:"-"`
+	// Referrer to be associated with the event
+	Referrer string `json:"referrer,omitempty"`
+	// Props of the event
+	Props map[string]string `json:"props,omitempty"`
+	// Revenue associated with the event
+	Revenue Revenue `json:"revenue,omitempty"`
 }
 
-// Revenue is an optional structure to set currency and amount
+// EventRequest represents the request for an event
+type EventRequest struct {
+	EventData
+	// User Agent to be associated with request event.
+	// This field is mandatory.
+	UserAgent string
+	// X-Forwarded-For header to be sent with the event. This field is optional.
+	XForwardedFor string
+	// AdditionalHeaders are additional headers to be included in the request. This field is optional.
+	AdditionalHeaders map[string]string
+	// IsDebuggingRequest tells if this is a debugging request. This field is optional.
+	IsDebuggingRequest bool
+}
+
+// Revenue represents the revenue associated with an event
 type Revenue struct {
+	// Currency is
 	Currency string `json:"currency"`
 	Amount   string `json:"amount"`
 }
 
-func (e *event) acquireRequest(data EventRequest) (*fasthttp.Request, error) {
-	userAgent, ok := data.Headers["user-agent"]
-	if !ok {
-		return nil, fmt.Errorf("missing user-agent header")
+func (c *Client) acquireEventRequest(request EventRequest) (*fasthttp.Request, error) {
+	if request.UserAgent == "" {
+
+		return nil, fmt.Errorf("missing user agent information for the event request")
 	}
 
-	req, err := e.plausibleClient.acquireRequest("POST", "/api/event", QueryArgs{}, QueryArgs{})
+	req, err := c.acquireRequest("POST", "/api/event", nil, nil)
 	if err != nil {
-		return nil, err
+
+		return nil, fmt.Errorf("acquiring request from client for /api/event: %w", err)
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("User-Agent", userAgent)
+	req.Header.Add("User-Agent", request.UserAgent)
 
-	if forwardedFor, ok := data.Headers["x-forwarded-for"]; ok {
-		req.Header.Add("X-Forwarded-For", forwardedFor)
+	if request.IsDebuggingRequest {
+		req.Header.Add("X-Debug-Request", "true")
+	}
+
+	if request.XForwardedFor != "" {
+		req.Header.Add("X-Forwarded-For", request.XForwardedFor)
+	}
+
+	for header, value := range request.AdditionalHeaders {
+		req.Header.Add(header, value)
 	}
 
 	body := new(bytes.Buffer)
-	err = json.NewEncoder(body).Encode(data)
+	err = json.NewEncoder(body).Encode(request.EventData)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("encoding request body for event request: %w", err)
 	}
 
 	req.SetBody(body.Bytes())

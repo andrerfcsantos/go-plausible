@@ -63,18 +63,6 @@ func (c *Client) BaseURL() string {
 	return c.baseURL
 }
 
-// Record an event on plausible.
-func (c *Client) PushEvent(ev EventRequest) ([]byte, error) {
-	e := &event{
-		plausibleClient: c,
-	}
-	req, err := e.acquireRequest(ev)
-	if err != nil {
-		return nil, err
-	}
-	return doRequest(c.client, req)
-}
-
 // Token returns the token this client is using.
 func (c *Client) Token() string {
 	return c.token
@@ -104,7 +92,7 @@ func (c *Client) acquireRequest(method, endpoint string, queries QueryArgs, form
 		req.URI().QueryArgs().Add(q.Name, q.Value)
 	}
 
-	if formData.Count() > 0 {
+	if formData != nil && formData.Count() > 0 {
 		body := &bytes.Buffer{}
 		mpwriter := multipart.NewWriter(body)
 
@@ -160,4 +148,13 @@ func (c *Client) CreateNewSite(siteRequest CreateSiteRequest) (CreateSiteResult,
 	}
 
 	return res, nil
+}
+
+// PushEvent records an event on plausible
+func (c *Client) PushEvent(ev EventRequest) ([]byte, error) {
+	req, err := c.acquireEventRequest(ev)
+	if err != nil {
+		return nil, fmt.Errorf("acquiring event request from client: %w", err)
+	}
+	return doRequest(s.httpClient, req)
 }
