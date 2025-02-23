@@ -80,11 +80,17 @@ func (c *Client) Site(siteID string) *Site {
 	}
 }
 
-// acquireRequest returns a new request with the base fields for any request set up.
-// All functions making requests should always call this function first.
+// acquireRequest is a generic function for acquiring a new request that is already authenticated with the client token
+// and has the base URL set to the default base URL.
 func (c *Client) acquireRequest(method, endpoint string, queries QueryArgs, formData QueryArgs) (*fasthttp.Request, error) {
+	return c.acquireRequestWithBaseURl(c.baseURL, method, endpoint, queries, formData)
+}
+
+// acquireRequest is the same as acquireRequest but allows the specification of a base URL.
+// This can be used for endpoints that do not follow the
+func (c *Client) acquireRequestWithBaseURl(baseURL, method, endpoint string, queries QueryArgs, formData QueryArgs) (*fasthttp.Request, error) {
 	req := fasthttp.AcquireRequest()
-	req.SetRequestURI(c.baseURL + endpoint)
+	req.SetRequestURI(baseURL + endpoint)
 	req.Header.SetMethod(method)
 	req.Header.Add("Authorization", "Bearer "+c.token)
 	req.Header.Add("User-Agent", "go-plausible")

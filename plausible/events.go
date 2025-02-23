@@ -5,7 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/valyala/fasthttp"
+	"regexp"
 )
+
+var (
+	apiVersionRegex *regexp.Regexp
+)
+
+func init() {
+	apiVersionRegex = regexp.MustCompile(`/api/v\d/`)
+}
 
 // EventData represents the data of an event
 type EventData struct {
@@ -52,7 +61,8 @@ func (c *Client) acquireEventRequest(request EventRequest) (*fasthttp.Request, e
 		return nil, fmt.Errorf("missing user agent information for the event request")
 	}
 
-	req, err := c.acquireRequest("POST", "/api/event", nil, nil)
+	newBaseURL := apiVersionRegex.ReplaceAllString(c.baseURL, "/")
+	req, err := c.acquireRequestWithBaseURl(newBaseURL, "POST", "api/event", nil, nil)
 	if err != nil {
 
 		return nil, fmt.Errorf("acquiring request from client for /api/event: %w", err)
