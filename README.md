@@ -591,19 +591,18 @@ func main() {
 	// Get an handler to perform queries for a given site
 	mysite := client.Site("example.com")
 	
-      e := plausible.EventRequest {
-		  EventData: EventData{
-            Domain:  "example.org",
-            Name:    "pageview",
-            URL:     "https://example.com/awesome_page",
-		  }
-		  UserAgent:  "user-agent"
-      }
-
-      _, err := client.PushEvent(e)
-      if err != nil {
-        // handle error
-      }
+	e := plausible.EventRequest {
+		EventData: plausible.EventData{
+			Domain:  "example.org",
+			Name:    "pageview",
+			URL:     "https://example.com/awesome_page",
+		},
+		UserAgent:  "user-agent",
+	}
+	
+	_, err := client.PushEvent(e)
+	if err != nil {
+		// handle error
 	}
 }
 ```
@@ -687,3 +686,4 @@ the [Issues section](https://github.com/andrerfcsantos/go-plausible/issues).
 ## <a name="license"></a> License
 
 This project uses the [MIT License](https://github.com/andrerfcsantos/go-plausible/blob/main/LICENSE)
+
